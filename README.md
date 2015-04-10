@@ -35,7 +35,7 @@ sudo yum -y install GMTSAR csh
 
 ##### Using the releases
 
-Log on the developer cloud sandbox. Download the rpm package from https://github.com/Terradue/InSAR-GMTSAR/releases. 
+Log on the developer cloud sandbox. Download the RPM package from https://github.com/geohazards-tep/InSAR-GMTSAR/releases. 
 Install the downloaded package by running these commands in a shell:
 
 ```bash
@@ -48,7 +48,7 @@ Log on the developer sandbox and run these commands in a shell:
 
 ```bash
 cd
-git clone git@github.com:Terradue/InSAR-GMTSAR.git
+git clone git@github.com:geohazards-tep/InSAR-GMTSAR.git
 git checkout develop
 cd InSAR-GMTSAR
 mvn install
@@ -81,7 +81,7 @@ To learn more and find information go to
 
 ### <a name="questions"></a>Questions, bugs, and suggestions
 
-Please file any bugs or questions as [issues](https://github.com/Terradue/InSAR-GMTSAR/issues/new) or send in a pull request.
+Please file any bugs or questions as [issues](https://github.com/geohazards-tep/InSAR-GMTSAR/issues/new) or send in a pull request.
 
 ### <a name="license"></a>License
 

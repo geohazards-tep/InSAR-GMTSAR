@@ -1,7 +1,5 @@
 #!/bin/bash
 
-
-set -x
 # source the ciop functions (e.g. ciop-log)
 source ${ciop_job_include}
 
@@ -41,7 +39,7 @@ trap cleanExit EXIT
 
 function set_env() {
 
-  export OS=`uname -p`
+  export OS=$( uname -p )
   export GMTHOME=/usr
   export NETCDFHOME=/usr
   export GMTSARHOME=/usr/local/GMTSAR
@@ -50,7 +48,8 @@ function set_env() {
   export PATH=${GMTSAR}/bin:${GMTSAR}/csh:${GMTSARHOME}/preproc/bin:${GMTSARHOME}/ENVISAT_preproc/bin/:${GMTSARHOME}/ENVISAT_preproc/csh:${PATH}
 
   # create environment
-  mkdir -p ${TMPDIR}/runtime/raw ${TMPDIR}/runtime/topo ${TMPDIR}/runtime/log ${TMPDIR}/runtime/intf &> /dev/null
+  TMPDIR=/tmp/$( uuidgen )
+  mkdir -p ${TMPDIR} ${TMPDIR}/runtime/raw ${TMPDIR}/runtime/topo ${TMPDIR}/runtime/log ${TMPDIR}/runtime/intf &> /dev/null
   mkdir -p ${TMPDIR}/aux/ENVI/ASA_INS
   mkdir -p ${TMPDIR}/aux/ENVI/Doris
 
@@ -59,6 +58,8 @@ function set_env() {
 }
 
 function main() {
+
+  set_env
 
   while read joborder_ref
   do
@@ -70,10 +71,10 @@ function main() {
     demfile=$( cat ${joborder} | grep "^dem=" | cut -d "=" -f 2- )
 
     ciop-copy -O ${TMPDIR}/runtime/topo ${demfile}
-    [ "$?" != "0" ] && return ${ERR_NODEM}
+    [ "$?" != "0" ] && return ${ERR_DEM}
 
     ciop-log "INFO" "copying the orbital data"
-    for  in $( cat ${joborder} | sort -u | grep "^.or=" | cut -d "=" -f 2- )
+    for doris in $( cat ${joborder} | sort -u | grep "^.or=" | cut -d "=" -f 2- )
     do
       enclosure=$( opensearch-client ${doris} enclosure )
       ciop-copy -O ${TMPDIR}/aux/ENVI/Doris ${enclosure}
@@ -100,9 +101,9 @@ function main() {
     # Get the master
     ciop-log "INFO" "retrieving the master from $master"
     master_ref=$( opensearch-client "${master}" enclosure | tail -1 )
-    master=$( ciop-copy -O ${TMPDIR}/runtime/raw ${master} )
+    master=$( ciop-copy -O ${TMPDIR}/runtime/raw ${master_ref} )
 	
-    [ -z "${master}" ] && exit ${ERR_MASTERFILE}
+    [ -z "${master}" ] && return ${ERR_MASTERFILE}
 
     [[ ${master} == *CEOS* ]] && {
       # ERS2 in CEOS format
@@ -115,11 +116,11 @@ function main() {
       ln -s ${master} master.baq
     }
 
-    ciop-log "INFO" "retrieving the slave from $slave"
-    slave=$( opensearch-client "$slave" enclosure | tail -1 )
-    slave=$( ciop-copy -O ${TMPDIR}/runtime/raw $slave )
+    ciop-log "INFO" "retrieving the slave from ${slave}"
+    slave_ref=$( opensearch-client "${slave}" enclosure | tail -1 )
+    slave=$( ciop-copy -O ${TMPDIR}/runtime/raw ${slave_ref} )
 	
-    [ -z "${slave}" ] && exit ${ERR_SLAVEFILE}
+    [ -z "${slave}" ] && return ${ERR_SLAVEFILE}
 
     [[ ${slave} == *CEOS* ]] && {	
       tar --extract --file=${slave} -O DAT_01.001 > ${TMPDIR}/runtime/raw/slave.dat
@@ -132,8 +133,7 @@ function main() {
     }
 
     result=$( echo "${master}_${slave}" | sed 's#.*/\(.*\)\.N1_.*/\(.*\)\.N1#\1_\2#g' )
-
-    ciop-log "INFO" "starting GMTSAR with $result"
+    ciop-log "INFO" "starting GMTSAR with ${result}"
     csh ${_CIOP_APPLICATION_PATH}/gmtsar/libexec/run_${flag}.csh & #> $TMPDIR/runtime/${result}_envi.log &
     wait ${!}			
 

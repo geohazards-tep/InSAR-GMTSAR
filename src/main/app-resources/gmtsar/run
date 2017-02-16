@@ -1,5 +1,7 @@
 #!/bin/bash
 
+
+set -x
 # source the ciop functions (e.g. ciop-log)
 source ${ciop_job_include}
 
@@ -59,24 +61,25 @@ do
 	ciop-log "INFO" "retrieving $input"
 	input=`ciop-copy -O $TMPDIR $input`
 
-	#demfile=$( ciop-browseresults -r $CIOP_WF_RUN_ID -j node_dem | tr -d '\n\r' )
 	demfile=`cat $input | grep "^dem=" | cut -d "=" -f 2-`
-	ciop-log "INFO" "DEM is: $demfile [$CIOP_WF_RUN_ID]"
+	ciop-log "INFO" "DEM is: $demfile"
 
 	ciop-copy -O $TMPDIR/runtime/topo $demfile
 	[ "$?" != "0" ] && exit $ERR_NODEM
 
 	ciop-log "INFO" "copying the DORIS files"
-	for mydoris in `cat $input | grep "^.or=" | cut -d "=" -f 2-`
+	for mydoris in `cat $input | sort -u | grep "^.or=" | cut -d "=" -f 2-`
 	do
-		ciop-copy -O $TMPDIR/aux/ENVI/Doris $mydoris
+		enclosure=$( opensearch-client $mydoris enclosure )
+		ciop-copy -O $TMPDIR/aux/ENVI/Doris ${enclosure}
 		[ "$?" != "0" ] && exit $ERR_AUX
 	done
 	 
 	ciop-log "INFO" "copying ASAR aux"
-	for myaux in `cat $input | grep "^aux=" | cut -d "=" -f 2-`
+	for myaux in `cat $input | sort -u | grep "^aux=" | cut -d "=" -f 2-`
 	do
-		ciop-copy -O $TMPDIR/aux/ENVI/ASA_INS $myaux
+		enclosure=$( opensearch-client $myaux enclosure )
+		ciop-copy -O $TMPDIR/aux/ENVI/ASA_INS ${enclosure}
 		[ "$?" != "0" ] && exit $ERR_AUX
 	done
 	

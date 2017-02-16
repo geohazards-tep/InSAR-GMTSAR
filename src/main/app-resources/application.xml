@@ -2,10 +2,10 @@
 <application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="gmtsar">
 	<jobTemplates>
 		<jobTemplate id="aux">
-			<streamingExecutable>/application/aux/run.sh</streamingExecutable>
+			<streamingExecutable>/application/aux/run</streamingExecutable>
 			<defaultParameters>
-				<parameter id="Level0_ref" title="Reference to master" abstract="Reference to master product catalogue entry in RDF format">http://catalogue.terradue.int/catalogue/search/ASA_IM__0P/ASA_IM__0CNPDE20100328_175019_000000162088_00084_42222_9504.N1/rdf</parameter>
-				<parameter id="aux_catalogue">http://catalogue.terradue.int/catalogue/search</parameter>
+				<parameter id="Level0_ref" title="Reference to master" abstract="Reference to master product catalogue entry">https://catalog.terradue.com/envisat/search?uid=ASA_IM__0CNPDE20100328_175019_000000162088_00084_42222_9504.N1</parameter>
+				<parameter id="aux_catalogue">https://catalog.terradue.com/envisat/search</parameter>
 			</defaultParameters>
 			<defaultJobconf>
 				<property id="ciop.job.max.tasks">1</property>
@@ -26,14 +26,14 @@
 			</defaultJobconf>
 		</jobTemplate>
 		<jobTemplate id="gmtsar">
-			<streamingExecutable>/application/gmtsar/run.sh</streamingExecutable>
+			<streamingExecutable>/application/gmtsar/run</streamingExecutable>
 			<defaultParameters/>
 			<defaultJobconf>
 				<property id="mapred.task.timeout">7200000</property>
 			</defaultJobconf>
 		</jobTemplate>
 		<jobTemplate id="merge">
-			<streamingExecutable>/application/merge/run.sh</streamingExecutable>
+			<streamingExecutable>/application/merge/run</streamingExecutable>
 			<defaultParameters/>
 			<defaultJobconf>
                                 <property id="ciop.job.max.tasks">1</property>
@@ -46,16 +46,16 @@
 		<node id="node_aux">
 			<job id="aux"/>
 			<sources>
-				<source id="slave" title="Reference to slave product(s)" abstract="Reference to slave product(s) catalogue entry in RDF format" refid="string:list" scope="runtime">http://catalogue.terradue.int/catalogue/search/ASA_IM__0P/ASA_IM__0CNPDE20100502_175016_000000172089_00084_42723_0354.N1/rdf</source>
+				<source id="slave" title="Reference to slave product(s)" abstract="Reference to slave product(s) catalogue entry" refid="string:list" scope="runtime">https://catalog.terradue.com/envisat/search?uid=ASA_IM__0CNPDE20100502_175016_000000172089_00084_42723_0354.N1</source>
 			</sources>
 			<parameters>
-				<parameter id="Level0_ref" scope="runtime">http://catalogue.terradue.int/catalogue/search/ASA_IM__0P/ASA_IM__0CNPDE20100328_175019_000000162088_00084_42222_9504.N1/rdf</parameter>
+				<parameter id="Level0_ref" scope="runtime">https://catalog.terradue.com/envisat/search?uid=ASA_IM__0CNPDE20100328_175019_000000162088_00084_42222_9504.N1</parameter>
 			</parameters>
 		</node>
 		<node id="node_dem">
 			<job id="dem"/>
 			<sources>
-				<source id="Level0_ref" title="ASAR master product catalogue entry in RDF format" abstract="ASAR master product passed by reference to catalogue entries in RDF format" refid="string:list" scope="runtime">http://eo-virtual-archive4.esa.int/search/ASA_IM__0P/ASA_IM__0CNPDE20100328_175004_000000162088_00084_42222_9504.N1/rdf</source>
+				<source id="Level0_ref" title="ASAR master product catalogue entry in RDF format" abstract="ASAR master product passed by reference to a catalogue entry" refid="string:list" scope="runtime">https://catalog.terradue.com/envisat/search?uid=ASA_IM__0CNPDE20100328_175019_000000162088_00084_42222_9504.N1</source>
 			</sources>
 			<parameters/>
 		</node>

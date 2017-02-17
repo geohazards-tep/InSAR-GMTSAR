@@ -1,8 +1,4 @@
-#!/bin/bash
 
-# source the ciop functions (e.g. ciop-log)
-
-set -x
 # define the exit codes
 SUCCESS=0
 ERR_JOBORDER=10

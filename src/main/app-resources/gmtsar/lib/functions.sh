@@ -1,7 +1,3 @@
-#!/bin/bash
-
-# source the ciop functions (e.g. ciop-log)
-source ${ciop_job_include}
 
 # define the exit codes
 SUCCESS=0

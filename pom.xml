@@ -11,7 +11,7 @@
     <version>2.0.0</version>
   </parent>
   <description>dcs-insar-gmtsar</description>
-  <version>1.4</version>
+  <version>1.4.1-SNAPSHOT</version>
   <properties>
     <summary>dcs-insar-gmtsar</summary>
     <description>dcs-insar-gmtsar</description>
